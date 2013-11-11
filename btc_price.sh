@@ -15,6 +15,6 @@ btce="$(echo "$btce" | cut -d ',' -f6 | cut -d ':' -f2)"
 btce="$(echo "$btce" | perl -pe "s/[\"| ]//g")"
 
 echo -e "MtGox:    $mtgox
-Coinbise: \$$coinbase
+Coinbase: \$$coinbase
 Bitstamp: \$$bitstamp
 BTC-e:    \$$btce"
