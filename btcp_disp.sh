@@ -3,7 +3,8 @@
 # this is an example of how to read the data from btcp.sh
 
 # run the collector if it's not running
-[[ $(pgrep btcp.sh) ]] || ./btcp.sh &
+[[ ! $(pgrep btcp.sh) ]] && (./btcp.sh &) &&
+	echo "Starting gatherer, rerun after 1 minute for real data" && exit 0
 
 # display prices
 prices=$(cat /tmp/btcp.txt)
