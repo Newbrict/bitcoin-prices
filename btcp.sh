@@ -16,6 +16,10 @@
 # get frequency, do not set this lower than 10
 [[ $#>0 ]] && freq="$1" || freq="1m"
 
+# if this is the first time we run the script ( or btcp.txt was deleted )
+[[ ! -f /tmp/btcp.txt ]] &&
+	echo -e "0:0:0\n1:0:0\n2:0:0\n3:0:0\n" > /tmp/btcp.txt
+
 # loop to send out all API requests in the background
 # and aggregate results in the btcp.txt file
 while [ true ]
@@ -24,7 +28,7 @@ do
 	curl -s "https://coinbase.com/api/v1/prices/spot_rate" > /tmp/btcp1.txt &
 	curl -s "https://www.bitstamp.net/api/ticker/" > /tmp/btcp2.txt &
 	curl -s "https://btc-e.com/api/2/btc_usd/ticker" > /tmp/btcp3.txt &
-  sleep 15
+  sleep $freq
  
 	# grab only the data we need from the ( should be ) json string
 	mtgox="$(cat /tmp/btcp0.txt | cut -d ',' -f10  | cut -d ':' -f2)"
@@ -35,10 +39,6 @@ do
 	bitstamp="$(echo "$bitstamp" | perl -pe "s/[\"| ]//g")"
 	btce="$(cat /tmp/btcp3.txt | cut -d ',' -f6 | cut -d ':' -f2)"
 	btce="$(echo "$btce" | perl -pe "s/[\"| ]//g")"
-
-	# if this is the first time we run the script ( or btcp.txt was deleted )
-	[[ ! -f /tmp/btcp.txt ]] &&
-		echo -e "0:0:0\n1:0:0\n2:0:0\n3:0:0\n" > /tmp/btcp.txt
 	
 	# grab old data so we can put that in place of garbage from apis
 	old="$(cat /tmp/btcp.txt)"
