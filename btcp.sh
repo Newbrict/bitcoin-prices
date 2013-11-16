@@ -48,7 +48,7 @@ do
 	oldbtce="$(echo "$old" | grep "^3" | cut -d ":" -f 2)"
 
 	# clear the btcp.txt file
-	>/tmp/btcp.txt
+	rm /tmp/btcp.txt
 
 	# push only valid numerical results to the btcp.txt file, sometimes
 	# the apis fail and give us cloudflare docs or something....
