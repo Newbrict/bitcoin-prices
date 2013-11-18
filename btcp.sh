@@ -31,21 +31,26 @@ do
   sleep $freq
  
 	# grab only the data we need from the ( should be ) json string
-	mtgox="$(cat /tmp/btcp0.txt | cut -d ',' -f10  | cut -d ':' -f2)"
-	mtgox="$(echo "$mtgox" | perl -pe "s/[\$ | \"| ]//g")"
-	coinbase="$(cat /tmp/btcp1.txt | cut -d ',' -f1  | cut -d ':' -f2)"
-	coinbase="$(echo "$coinbase" | perl -pe "s/[\"| ]//g")"
-	bitstamp="$(cat /tmp/btcp2.txt | cut -d ',' -f2  | cut -d ':' -f2)"
-	bitstamp="$(echo "$bitstamp" | perl -pe "s/[\"| ]//g")"
-	btce="$(cat /tmp/btcp3.txt | cut -d ',' -f6 | cut -d ':' -f2)"
-	btce="$(echo "$btce" | perl -pe "s/[\"| ]//g")"
+	[[ -f /tmp/btcp0.txt ]] &&
+		mtgox="$(cat /tmp/btcp0.txt | cut -d ',' -f10  | cut -d ':' -f2)" &&
+		mtgox="$(echo "$mtgox" | perl -pe "s/[\$ | \"| ]//g")"
+	[[ -f /tmp/btcp1.txt ]] &&
+		coinbase="$(cat /tmp/btcp1.txt | cut -d ',' -f1  | cut -d ':' -f2)" &&
+		coinbase="$(echo "$coinbase" | perl -pe "s/[\"| ]//g")"
+	[[ -f /tmp/btcp2.txt ]] &&
+		bitstamp="$(cat /tmp/btcp2.txt | cut -d ',' -f2  | cut -d ':' -f2)" &&
+		bitstamp="$(echo "$bitstamp" | perl -pe "s/[\"| ]//g")"
+	[[ -f /tmp/btcp3.txt ]] &&
+		btce="$(cat /tmp/btcp3.txt | cut -d ',' -f6 | cut -d ':' -f2)" &&
+		btce="$(echo "$btce" | perl -pe "s/[\"| ]//g")"
 	
 	# grab old data so we can put that in place of garbage from apis
-	old="$(cat /tmp/btcp.txt)"
-	oldmtgox="$(echo "$old" | grep "^0" | cut -d ":" -f 2)"
-	oldcoinbase="$(echo "$old" | grep "^1" | cut -d ":" -f 2)"
-	oldbitstamp="$(echo "$old" | grep "^2" | cut -d ":" -f 2)"
-	oldbtce="$(echo "$old" | grep "^3" | cut -d ":" -f 2)"
+	[[ -f /tmp/btcp.txt ]] &&
+		old="$(cat /tmp/btcp.txt)" &&
+		oldmtgox="$(echo "$old" | grep "^0" | cut -d ":" -f 2)" &&
+		oldcoinbase="$(echo "$old" | grep "^1" | cut -d ":" -f 2)" &&
+		oldbitstamp="$(echo "$old" | grep "^2" | cut -d ":" -f 2)" &&
+		oldbtce="$(echo "$old" | grep "^3" | cut -d ":" -f 2)"
 
 	# clear the btcp.txt file
 	rm /tmp/btcp.txt

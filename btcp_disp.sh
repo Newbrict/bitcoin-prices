@@ -19,7 +19,19 @@ btce=$(echo "$prices" | grep "^3" | cut -d ":" -f 2-)
 
 function printer() {
 	price="$(echo $2 | cut -d ":" -f 1)"
-	diff="$(echo $2 | cut -d ":" -f 2)"
+	minordiff="$(echo $2 | cut -d ":" -f 2)"
+	diff="0"
+	lastf="/tmp/${1}_last.txt"
+	lastp="$price"
+
+	# if available grab the last price and compute diff
+	[[ -f "$lastf" ]] &&
+		lastp="$(cat $lastf)" &&
+		diff="$(bc <<< "$price-$lastp")"
+		
+	
+	# store this price
+	echo "$price" > "$lastf"
 
 	echo -ne "$1: "
 	if [ "$diff" = "0" ]
@@ -29,7 +41,7 @@ function printer() {
 	then
 		echo -e "\e[40m\e[0;31m$price ($diff)\e[0m"
 	else
-		echo -e "\e[40m\e[0;32m$price ($diff)\e[0m"
+		echo -e "\e[40m\e[0;32m$price (+$diff)\e[0m"
 	fi
 }
 
