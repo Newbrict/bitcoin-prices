@@ -18,6 +18,7 @@ bitstamp=$(echo "$prices" | grep "^2" | cut -d ":" -f 2-)
 btce=$(echo "$prices" | grep "^3" | cut -d ":" -f 2-)
 
 function printer() {
+
 	price="$(echo $2 | cut -d ":" -f 1)"
 	minordiff="$(echo $2 | cut -d ":" -f 2)"
 	diff="0"
@@ -27,12 +28,14 @@ function printer() {
 	# if available grab the last price and compute diff
 	[[ -f "$lastf" ]] &&
 		lastp="$(cat $lastf)" &&
-		diff="$(bc <<< "$price-$lastp")"
 		
+	# only if we have data continue
+	[[ -z "$2" ]] && echo -e $1:"\e[40m\e[0;36m$lastp (?)\e[0m" && return
 	
 	# store this price
 	echo "$price" > "$lastf"
 
+	diff="$(bc <<< "$price-$lastp")"
 	echo -ne "$1: "
 	if [ "$diff" = "0" ]
 	then
@@ -45,11 +48,7 @@ function printer() {
 	fi
 }
 
-[[ -z "$mtgox" ]] ||
 printer "MtGox" "$mtgox"
-[[ -z "$coinbase" ]] ||
 printer "Coinbase" "$coinbase"
-[[ -z "$bitstamp" ]] ||
 printer "Bitstamp" "$bitstamp"
-[[ -z "$btce" ]] ||
 printer "Btc-e" "$btce"
