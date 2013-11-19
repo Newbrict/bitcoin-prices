@@ -45,7 +45,11 @@ function printer() {
 	fi
 }
 
+[[ -z "$mtgox" ]] ||
 printer "MtGox" "$mtgox"
+[[ -z "$coinbase" ]] ||
 printer "Coinbase" "$coinbase"
+[[ -z "$bitstamp" ]] ||
 printer "Bitstamp" "$bitstamp"
+[[ -z "$btce" ]] ||
 printer "Btc-e" "$btce"

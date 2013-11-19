@@ -24,9 +24,13 @@
 # and aggregate results in the btcp.txt file
 while [ true ]
 do
+	rm /tmp/btcp0.txt
 	curl -s "http://data.mtgox.com/api/2/BTCUSD/money/ticker_fast" > /tmp/btcp0.txt &
+	rm /tmp/btcp1.txt
 	curl -s "https://coinbase.com/api/v1/prices/spot_rate" > /tmp/btcp1.txt &
+	rm /tmp/btcp2.txt
 	curl -s "https://www.bitstamp.net/api/ticker/" > /tmp/btcp2.txt &
+	rm /tmp/btcp3.txt
 	curl -s "https://btc-e.com/api/2/btc_usd/ticker" > /tmp/btcp3.txt &
   sleep $freq
  
