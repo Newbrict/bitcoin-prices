@@ -30,7 +30,7 @@ function printer() {
 		lastp="$(cat $lastf)" &&
 		
 	# only if we have data continue
-	[[ -z "$2" ]] && echo -e $1:"\e[40m\e[0;36m$lastp (?)\e[0m" && return
+	[[ -z "$2" ]] && echo -e $1:"\e[40m\e[0;35m$lastp (?)\e[0m" && return
 	
 	# store this price
 	echo "$price" > "$lastf"
