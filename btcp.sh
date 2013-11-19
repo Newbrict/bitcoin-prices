@@ -10,7 +10,7 @@ base="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # loop to send out all API requests in the background
 while [ true ]; do
-	ls -1 "$base/exchanges/" > .config.txt
+	ls -1 "$base/exchanges/" > "$base/exchanges/.config.txt"
 	exchanges="$base/exchanges/.config.txt"
 	# for each exchange run their api call
 	while read ex; do
