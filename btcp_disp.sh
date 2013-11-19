@@ -2,53 +2,41 @@
 
 # this is an example of how to read the data from btcp.sh
 
+base="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+exchanges="$base/exchanges/.config.txt"
+
 # run the collector if it's not running
-[[ ! $(pgrep btcp.sh) ]] && (./btcp.sh &) &&
+[[ ! $(pgrep btcp.sh) ]] && ($base/btcp.sh &) &&
 	echo "Starting gatherer, rerun after 1 minute for real data" && exit 0
 
-# exit if there are no prices
-[[ ! -f "/tmp/btcp.txt" ]] && echo "no prices found" && exit 1
+# display prices for each exchange
+while read line; do
+		ex="$(echo $line | cut -d ":" -f 2)"
+		price="$($base/exchanges/$ex/price.sh)"
+		diff="0"
 
-# display prices
-prices=$(cat /tmp/btcp.txt)
-
-mtgox=$(echo "$prices" | grep "^0" | cut -d ":" -f 2-)
-coinbase=$(echo "$prices" | grep "^1" | cut -d ":" -f 2-)
-bitstamp=$(echo "$prices" | grep "^2" | cut -d ":" -f 2-)
-btce=$(echo "$prices" | grep "^3" | cut -d ":" -f 2-)
-
-function printer() {
-
-	price="$(echo $2 | cut -d ":" -f 1)"
-	minordiff="$(echo $2 | cut -d ":" -f 2)"
-	diff="0"
-	lastf="/tmp/${1}_last.txt"
-	lastp="$price"
-
-	# if available grab the last price and compute diff
-	[[ -f "$lastf" ]] &&
-		lastp="$(cat $lastf)" &&
-		
-	# only if we have data continue
-	[[ -z "$2" ]] && echo -e $1:"\e[40m\e[0;35m$lastp (?)\e[0m" && return
+		lastf="$base/exchanges/$ex/data/price.txt"
+		lastp="$price"
 	
-	# store this price
-	echo "$price" > "$lastf"
-
-	diff="$(bc <<< "$price-$lastp")"
-	echo -ne "$1: "
-	if [ "$diff" = "0" ]
-	then
-		echo -e "\e[40m\e[0;37m$price ($diff)\e[0m"
-	elif [ "$(echo $diff | grep -o "-")" == "-" ]
-	then
-		echo -e "\e[40m\e[0;31m$price ($diff)\e[0m"
-	else
-		echo -e "\e[40m\e[0;32m$price (+$diff)\e[0m"
-	fi
-}
-
-printer "MtGox" "$mtgox"
-printer "Coinbase" "$coinbase"
-printer "Bitstamp" "$bitstamp"
-printer "Btc-e" "$btce"
+		# if available grab the last price and compute diff
+		[[ -f "$lastf" ]] &&
+			lastp="$(cat $lastf)"
+			
+		# only if we have data continue
+		[[ "$price" = 0 ]] && echo -e $ex: "\e[40m\e[0;35m$lastp (?)\e[0m" && continue
+		
+		# store this price
+		echo "$price" > "$lastf"
+	
+		diff="$(bc <<< "$price-$lastp")"
+		echo -ne "$ex: "
+		if [ "$diff" = "0" ]
+		then
+			echo -e "\e[40m\e[0;37m$price ($diff)\e[0m"
+		elif [ "$(echo $diff | grep -o "-")" == "-" ]
+		then
+			echo -e "\e[40m\e[0;31m$price ($diff)\e[0m"
+		else
+			echo -e "\e[40m\e[0;32m$price (+$diff)\e[0m"
+		fi
+done < "$exchanges"
