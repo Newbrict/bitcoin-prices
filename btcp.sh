@@ -13,8 +13,9 @@ while [ true ]; do
 	ls -1 "$base/exchanges/" > .config.txt
 	exchanges="$base/exchanges/.config.txt"
 	# for each exchange run their api call
-	while read line; do
-		ex="$(echo $line | cut -d ":" -f 2)"
+	while read ex; do
+		[[ ! -d "$base/exchanges/$ex/data/" ]] &&
+			mkdir "$base/exchanges/$ex/data/"
 	 	$base/exchanges/$ex/api.sh &
 	done < "$exchanges"
   sleep $freq

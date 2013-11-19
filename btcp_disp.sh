@@ -10,23 +10,28 @@ exchanges="$base/exchanges/.config.txt"
 	echo "Starting gatherer, rerun after 1 minute for real data" && exit 0
 
 # display prices for each exchange
-while read line; do
-		ex="$(echo $line | cut -d ":" -f 2)"
+while read ex; do
 		price="$($base/exchanges/$ex/price.sh)"
 		diff="0"
 
 		lastf="$base/exchanges/$ex/data/price.txt"
 		lastp="$price"
 	
-		# if available grab the last price and compute diff
-		[[ -f "$lastf" ]] &&
-			lastp="$(cat $lastf)"
-			
-		# only if we have data continue
-		[[ "$price" = 0 ]] && echo -e $ex: "\e[40m\e[0;35m$lastp (?)\e[0m" && continue
-		
+		# if no last price
+		[[ ! -f "$lastf" ]] &&
+			echo -e $ex: "\e[40m\e[0;35m$price (?)\e[0m" &&
+			echo "$price" > "$lastf" && continue
+		lastp="$(cat $lastf)"
+
+
+		# if price is 0
+		[[ "$price" = "0" ]] &&	
+			echo -e $ex: "\e[40m\e[0;35m$lastp (?)\e[0m" && continue
+
 		# store this price
 		echo "$price" > "$lastf"
+		
+
 	
 		diff="$(bc <<< "$price-$lastp")"
 		echo -ne "$ex: "
