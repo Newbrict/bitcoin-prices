@@ -1,5 +1,7 @@
 bitcoin-prices
 ==============
+if you found this usefull I appreciate donations :>
+BTC: 1BmqNSZt5kSHvHbAFqMjKNTcpfX2MyTWZk
 
 simple script that gives you the "last" (and change) price on:
 
