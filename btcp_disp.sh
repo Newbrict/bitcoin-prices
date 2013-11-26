@@ -19,14 +19,14 @@ while read ex; do
 	
 		# if no last price
 		[[ ! -f "$lastf" ]] &&
-			echo -e $ex: "\e[40m\e[0;35m$price (?)\e[0m" &&
+			printf "%-10s|\e[40m\e[0;35m%-6.2f (?)\e[0m\n" $ex $price&&
 			echo "$price" > "$lastf" && continue
 		lastp="$(cat $lastf)"
 
 
 		# if price is 0
 		[[ "$price" = "0" ]] &&	
-			echo -e $ex: "\e[40m\e[0;35m$lastp (?)\e[0m" && continue
+			printf "%-10s|\e[40m\e[0;35m%-6.2f (?)\e[0m\n" $ex $lastp && continue
 
 		# store this price
 		echo "$price" > "$lastf"
@@ -34,14 +34,14 @@ while read ex; do
 
 	
 		diff="$(bc <<< "$price-$lastp")"
-		echo -ne "$ex: "
+		printf "%-10s|" $ex
 		if [ "$diff" = "0" ]
 		then
-			echo -e "\e[40m\e[0;37m$price ($diff)\e[0m"
+			printf "\e[40m\e[0;37m%-6.2f (%.2f)\e[0m\n" $price $diff
 		elif [ "$(echo $diff | grep -o "-")" == "-" ]
 		then
-			echo -e "\e[40m\e[0;31m$price ($diff)\e[0m"
+			printf "\e[40m\e[0;31m%-6.2f (%.2f)\e[0m\n" $price $diff
 		else
-			echo -e "\e[40m\e[0;32m$price (+$diff)\e[0m"
+			printf "\e[40m\e[0;32m%-6.2f (+%.2f)\e[0m\n" $price $diff
 		fi
 done < "$exchanges"

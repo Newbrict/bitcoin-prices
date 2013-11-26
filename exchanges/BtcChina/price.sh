@@ -7,5 +7,5 @@ outc="$base/data/conv.txt"
 	[[ $price = *[0-9]* && $price = ?([+-])*([0-9])?(.*([0-9])) ]] &&
 	[[ $conv = *[0-9]* && $price = ?([+-])*([0-9])?(.*([0-9])) ]] &&
 		price=$(bc <<< "$price*$conv") &&
-		echo $price | perl -pe "s/([0-9]*\....).*/\1/" ||
+		echo $price ||
 		echo 0
