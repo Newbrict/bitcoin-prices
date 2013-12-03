@@ -9,9 +9,19 @@ exchanges="$base/exchanges/.config.txt"
 [[ ! $(pgrep btcp.sh) ]] && ($base/btcp.sh &) &&
 	echo "Starting gatherer, rerun after 1 minute for real data" && exit 0
 
+#formatting vars
+s1="-9s"
+s2="8.2f"
+s3="+ 8.2f"
+red="\e[0;31m"
+gre="\e[0;32m"
+whi="\e[0;37m"
+prp="\e[0;35m"
+clr="\e[0m"
+err="7s"
+errsym="?"
+
 # display prices for each exchange
-s1="-10s"
-s2="-7.2f"
 while read ex; do
 		price="$($base/exchanges/$ex/price.sh)"
 		diff="0"
@@ -19,16 +29,18 @@ while read ex; do
 		lastf="$base/exchanges/$ex/data/price.txt"
 		lastp="$price"
 	
+		lasterr="$whi%$s1$whi|$prp%$s2$whi| $prp%$err$clr\n"
 		# if no last price
 		[[ ! -f "$lastf" ]] &&
-			printf "%$s1|\e[40m\e[0;35m%$s2 (?)\e[0m\n" $ex $price&&
+			printf "$lasterr" $ex $price $errsym &&
 			echo "$price" > "$lastf" && continue
 		lastp="$(cat $lastf)"
 
 
 		# if price is 0
 		[[ "$price" = "0" ]] &&	
-			printf "%$s1|\e[40m\e[0;35m%$s2 (?)\e[0m\n" $ex $lastp && continue
+			printf "$lasterr" $ex $lastp $errsym &&
+			continue
 
 		# store this price
 		echo "$price" > "$lastf"
@@ -36,14 +48,14 @@ while read ex; do
 
 	
 		diff="$(bc <<< "$price-$lastp")"
-		printf "%$s1|" $ex
+		printf "$whi%$s1|" $ex
 		if [ "$diff" = "0" ]
 		then
-			printf "\e[40m\e[0;37m%$s2 (%.2f)\e[0m\n" $price $diff
+			printf "%$s2$whi|%$s3$clr\n" $price $diff
 		elif [ "$(echo $diff | grep -o "-")" == "-" ]
 		then
-			printf "\e[40m\e[0;31m%$s2 (%.2f)\e[0m\n" $price $diff
+			printf "$red%$s2$whi|$red%$s3$clr\n" $price $diff
 		else
-			printf "\e[40m\e[0;32m%$s2 (+%.2f)\e[0m\n" $price $diff
+			printf "$gre%$s2$whi|$gre%$s3$clr\n" $price $diff
 		fi
 done < "$exchanges"
