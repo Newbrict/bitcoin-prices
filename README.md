@@ -1,7 +1,6 @@
 bitcoin-prices
 ==============
 ####simple script that gives you the last price (and change) on:  
-  * MtGox
   * Coinbase
   * Bitstamp
   * Btc-e
