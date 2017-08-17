@@ -1,13 +1,11 @@
 bitcoin-prices
 ==============
-####simple script that gives you the last price (and change) on:  
+# This isn't being worked on anymore, no guarantee that anything is functional
+#### simple script that gives you the last price (and change) on:  
   * Coinbase
   * Bitstamp
   * Btc-e
   * BtcChina
-
-if you found this usefull I appreciate donations :>  
-BTC: 1BmqNSZt5kSHvHbAFqMjKNTcpfX2MyTWZk  
 
 You can add any exchange you like by making a folder in exchanges named what  
 you want the exchange to appear as, and creating the api.sh & price.sh within it
